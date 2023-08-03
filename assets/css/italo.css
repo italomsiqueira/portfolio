@@ -1,0 +1,10 @@
+.icone-cima{
+    width: 20px;
+    height: 20px;
+    margin-bottom: 5px;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    background: #555b69;
+  }

@@ -1,0 +1,7 @@
+.bloco-preto{
+    background-color: black;
+}
+.bloco-amarelo{
+    background-color: yellow;
+    min-height: 400px;
+}
