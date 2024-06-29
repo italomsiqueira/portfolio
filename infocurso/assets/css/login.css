@@ -1,0 +1,94 @@
+body{
+    background-image: url('../img/background.jpg');
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;       
+}
+
+.container-fluid {
+    background-color:  #0a1f1eb6;
+    height: 100vh;
+}
+
+.bloco-login {
+    margin-top: 8%;
+    -webkit-box-shadow: 10px 10px 15px 4px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 10px 10px 15px 4px rgba(0, 0, 0, 0.75);
+    box-shadow: 10px 10px 15px 4px rgba(0, 0, 0, 0.75);
+    border-radius: 5px 5px 5px 5px;
+}
+
+.bloco-input label {
+    color: #174F4E;
+    font-size: 19px;
+}
+
+.btn-salvar {
+    margin-top: 25px;
+    font-size: 20px;
+    min-width: 100%;
+    margin-bottom: 25px;
+    background-color: #174F4E;
+    border-color: rgba(0, 255, 255, 0);
+    color
+}
+
+
+.bloco-info {
+    background-color: #174F4E;
+    min-height: 50vh;    
+    border-radius: 5px 0px 0px 5px;
+}
+
+.bloco-form {
+    background-color: rgb(231, 231, 231);
+    min-height: 50vh;
+    border-radius: 0px 5px 5px 0px;    
+}
+
+.login {
+    margin-top: 12%;
+}
+
+.form-control {
+    -webkit-box-shadow: 3px 3px 5px 2px rgba(0, 0, 0, 0.438);
+    -moz-box-shadow: 3px 3px 5px 2px rgba(0, 0, 0, 0.438);
+    box-shadow: 3px 3px 5px 2px rgba(0, 0, 0, 0.438);
+    margin-bottom: 25px;
+    
+}
+
+.login p {
+    text-align: center;
+    color: #174F4E;
+}
+
+.login a {
+    text-decoration: none;
+    color: #174F4E;
+}
+
+center img {
+    width: 250px;
+    margin-top: 4%;
+}
+
+h2 {
+    margin-top: 4%;
+    color: rgb(231, 231, 231);
+}
+
+h4 {
+    font-weight: normal;
+    color: rgb(231, 231, 231);
+    font-size: 22px;
+}
+
+h6 {
+    font-weight: normal;
+    color: rgb(231, 231, 231);
+}
+
+.logo{
+    padding-top: 30%;
+}

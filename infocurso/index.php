@@ -7,10 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="assets/css/cadastro.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css' />
     <script src='http://code.jquery.com/jquery-2.1.3.min.js'></script>
-    <script src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>
+    <script src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>    
+    <link rel="stylesheet" href="assets/css/cadastro.css">
     <title>Inicio</title>
 </head>
 
@@ -48,6 +49,9 @@
                         <a class="dropdown-item" href="cadastrar-aluno.php">Cadastrar aluno</a>
                         <a class="dropdown-item" href="listar-alunos.php">Ver alunos</a>
                     </div>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link sair" href="login.php">Sair</a>
                 </li>
 
             </ul>

@@ -138,3 +138,20 @@ function validarBusca(){
     }
     
 }
+
+function validarLogin(){
+    let login = document.getElementById('login').value;
+    let senha = document.getElementById('senha').value;
+
+    if(login == ""){
+        document.getElementById('erro').innerHTML = "<strong>Ops! Informe o login.</strong>";
+        document.getElementById('erro').removeAttribute('hidden');
+        document.getElementById('login').focus();
+    }else if(senha ==""){
+        document.getElementById('erro').innerHTML = "<strong>Ops! Informe a senha.</strong>";
+        document.getElementById('erro').removeAttribute('hidden');
+        document.getElementById('senha').focus();
+    }else{
+        document.getElementById('form-login').removeAttribute('onsubmit');
+    }
+}
