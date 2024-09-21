@@ -40,8 +40,8 @@ while ($dados = mysqli_fetch_assoc($resultado)) {
 
 <body>
 
-    <!--menu-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+   <!--menu-->
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="index.php"><img src="assets/img/logo-cinza.png" width="130" height="30" alt=""></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Alterna navegação">
@@ -73,6 +73,9 @@ while ($dados = mysqli_fetch_assoc($resultado)) {
                         <a class="dropdown-item" href="cadastrar-aluno.php">Cadastrar aluno</a>
                         <a class="dropdown-item" href="listar-alunos.php">Ver alunos</a>
                     </div>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link sair" href="login.php">Sair</a>
                 </li>
 
             </ul>

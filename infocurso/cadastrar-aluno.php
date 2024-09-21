@@ -54,6 +54,9 @@ require('includes/conexao.php');
                         <a class="dropdown-item" href="listar-alunos.php">Ver alunos</a>
                     </div>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link sair" href="login.php">Sair</a>
+                </li>
 
             </ul>
         </div>
