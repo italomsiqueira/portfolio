@@ -1,0 +1,82 @@
+/* Fundo com imagem e overlay */
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('../img/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* overlay escura */
+    z-index: 0;
+}
+
+/* Card de login */
+.login-card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    padding: 2rem;
+    max-width: 450px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+/* Logo */
+.login-card .logo {
+    max-width: 350px;
+    margin-bottom: 1rem;
+}
+
+/* Inputs */
+.form-control {
+    border-radius: 50px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+}
+
+/* Botão */
+.btn-login {
+    border-radius: 50px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    background: #667eea;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-login:hover {
+    background: #5a67d8;
+}
+
+/* Alertas */
+.alert {
+    border-radius: 0.75rem;
+}
+
+/* Footer */
+.login-footer {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #000000;
+}
+
+.login-footer a {
+    color: #667eea;
+    text-decoration: none;
+}

@@ -1,0 +1,36 @@
+.bloco-preto {
+    background-color: black;
+}
+
+.bloco-amarelo {
+    background-color: yellow;
+    min-height: 400px;
+}
+
+.checkbox-menu li label {
+    display: block;
+    padding: 3px 10px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+    margin: 0;
+    transition: background-color .4s ease;
+}
+
+.checkbox-menu li input {
+    margin: 0px 5px;
+    top: 2px;
+    position: relative;
+}
+
+.checkbox-menu li label:hover,
+.checkbox-menu li label:focus {
+    background-color: #f5f5f5;
+}
+
+/* Classe simples para esconder elementos de forma garantida */
+.d-none-custom {
+    display: none !important;
+}

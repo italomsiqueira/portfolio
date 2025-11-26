@@ -1,0 +1,14 @@
+table img {
+  border: 2px solid #ddd;
+  padding: 2px;
+  background: #fff;
+}
+
+.card.border-danger {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.btn i {
+  vertical-align: middle;
+}
