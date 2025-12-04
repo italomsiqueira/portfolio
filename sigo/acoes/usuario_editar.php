@@ -1,6 +1,7 @@
 <?php
 
-function compactarImagem($origem, $destino, $qualidade = 70) {
+function compactarImagem($origem, $destino, $qualidade = 70)
+{
     $info = getimagesize($origem);
     $tipo = $info['mime'];
 
@@ -42,7 +43,8 @@ $senha = $_POST['senha'];
 $sqlFoto = "";
 if (!empty($_FILES['foto']['name'])) {
     $pasta = "../uploads/";
-    if (!is_dir($pasta)) mkdir($pasta);
+    if (!is_dir($pasta))
+        mkdir($pasta);
     $fotoNome = uniqid() . "-" . basename($_FILES['foto']['name']);
     $fotoCaminho = $pasta . $fotoNome;
     // Compacta 👇
@@ -50,6 +52,9 @@ if (!empty($_FILES['foto']['name'])) {
     move_uploaded_file($_FILES['foto']['tmp_name'], $fotoCaminho);
     $fotoRel = "uploads/" . $fotoNome;
     $sqlFoto = ", foto = '$fotoRel'";
+
+    echo "Tamanho antes: " . filesize($_FILES['foto']['tmp_name']) . "<br>";
+    echo "Tamanho depois: " . filesize($nomeFinal) . "<br>";
 }
 
 if (!empty($senha)) {
