@@ -63,8 +63,8 @@ if (!empty($_FILES['foto']['name'])) {
     $fotoRel = "uploads/" . $fotoNome;
     $sqlFoto = ", foto = '$fotoRel'";
 
-    echo "Tamanho antes: " . filesize($_FILES['foto']['tmp_name']) . " bytes<br>";
-    echo "Tamanho depois: " . filesize($fotoCaminho) . " bytes<br>";
+    //echo "Tamanho antes: " . filesize($_FILES['foto']['tmp_name']) . " bytes<br>";
+    //echo "Tamanho depois: " . filesize($fotoCaminho) . " bytes<br>";
 }
 
 // Atualiza usuário
