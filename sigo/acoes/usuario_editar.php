@@ -14,6 +14,8 @@ if (!empty($_FILES['foto']['name'])) {
     if (!is_dir($pasta)) mkdir($pasta);
     $fotoNome = uniqid() . "-" . basename($_FILES['foto']['name']);
     $fotoCaminho = $pasta . $fotoNome;
+    // Compacta 👇
+    compactarImagem($_FILES['foto']['tmp_name'], $fotoCaminho, 70);
     move_uploaded_file($_FILES['foto']['tmp_name'], $fotoCaminho);
     $fotoRel = "uploads/" . $fotoNome;
     $sqlFoto = ", foto = '$fotoRel'";
