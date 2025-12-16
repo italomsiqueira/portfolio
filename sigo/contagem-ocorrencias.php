@@ -15,93 +15,128 @@ $turmaBusca = isset($_GET['turmaBusca']) ? intval($_GET['turmaBusca']) : '';
 <?php include('layout/head.php'); ?>
 
 <body>
-<?php include('layout/menu.php'); ?>
+    <?php include('layout/menu.php');
+    // Critério padrão
+    $ordenarPor = 'nome';
 
-<div class="container mt-4">
-    <h3 class="text-center mb-4">Ocorrências por Aluno</h3>
+    // Captura o parâmetro vindo da URL
+    if (isset($_GET['ordem'])) {
+        $ordem = $_GET['ordem'];
 
-    <!-- FILTROS -->
-    <form class="row g-3 mb-4" method="GET">
-        <div class="col-md-6">
-            <input type="text" class="form-control" name="nomeBusca" id="nomeBusca"
-                   placeholder="Digite o nome do aluno..."
-                   value="<?= htmlspecialchars($nomeBusca) ?>">
-        </div>
+        // Lista branca de opções permitidas (segurança)
+        switch ($ordem) {
+            case 'nome':
+                $ordenarPor = 'alunos.nome';
+                break;
 
-        <div class="col-md-4">
-            <select name="turmaBusca" class="selectpicker form-control" data-live-search="true" title="Filtrar por turma">
-                <option value="">Todas as turmas</option>
-                <?php
-                $turmas_sql = "SELECT id, ano, turma FROM turma ORDER BY ano, turma";
-                $turmas_res = mysqli_query($conn, $turmas_sql);
-                while ($t = mysqli_fetch_assoc($turmas_res)) {
-                    $selected = ($turmaBusca == $t['id']) ? 'selected' : '';
-                    echo "<option value='{$t['id']}' $selected>{$t['ano']}-{$t['turma']}</option>";
-                }
-                ?>
-            </select>
-        </div>
+            case 'turma':
+                $ordenarPor = 'turmas.nome';
+                break;
 
-        <div class="col-md-1 d-grid">
-            <button type="submit" class="btn btn-dark"><i class="bi bi-funnel-fill"></i></button>
-        </div>
-        <div class="col-md-1 d-grid">
-            <a href="<?= basename($_SERVER['PHP_SELF']); ?>" class="btn btn-danger">Limpar</a>
-        </div>
-    </form>
+            case 'qtd':
+                $ordenarPor = 'total_ocorrencias';
+                break;
+        }
+    }
+    ?>
 
-    <!-- Mensagem de sucesso/erro -->
-    <?php if (isset($_GET['msg'])): ?>
-        <div class="alert alert-<?= $_GET['msg'] == 'sucesso' ? 'success' : 'danger' ?>">
-            <strong>
-                <?= $_GET['msg'] == 'sucesso' ? 'Ocorrência removida com sucesso!' : 'Erro ao processar a solicitação!' ?>
-            </strong>
-        </div>
-    <?php endif; ?>
+    <div class="container mt-4">
+        <h3 class="text-center mb-4">Ocorrências por Aluno</h3>
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Turma</th>
-                    <th class="text-center">Qtd. Ocorrências</th>
-                    <th class="text-center">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Filtros dinâmicos
-                $filtros = [];
-                if (!empty($nomeBusca)) $filtros[] = "UPPER(a.nome) LIKE '%$nomeBusca%'";
-                if (!empty($turmaBusca)) $filtros[] = "a.turma = '$turmaBusca'";
-                $where = $filtros ? "WHERE " . implode(" AND ", $filtros) : "";
 
-                $sql = "
+
+        <!-- FILTROS -->
+        <form class="row g-3 mb-4" method="GET">
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="nomeBusca" id="nomeBusca"
+                    placeholder="Digite o nome do aluno..." value="<?= htmlspecialchars($nomeBusca) ?>">
+            </div>
+
+            <div class="col-md-4">
+                <select name="turmaBusca" class="selectpicker form-control" data-live-search="true"
+                    title="Filtrar por turma">
+                    <option value="">Todas as turmas</option>
+                    <?php
+                    $turmas_sql = "SELECT id, ano, turma FROM turma ORDER BY $ordenarPor";
+                    $turmas_res = mysqli_query($conn, $turmas_sql);
+                    while ($t = mysqli_fetch_assoc($turmas_res)) {
+                        $selected = ($turmaBusca == $t['id']) ? 'selected' : '';
+                        echo "<option value='{$t['id']}' $selected>{$t['ano']}-{$t['turma']}</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <select name="ordem" class="form-select w-auto d-inline" onchange="this.form.submit()">
+                    <option value="nome">Ordenar por Nome</option>
+                    <option value="turma">Ordenar por Turma</option>
+                    <option value="qtd">Ordenar por Qtd. Ocorrências</option>
+                </select>
+            </div>
+
+            <div class="col-md-1 d-grid">
+                <button type="submit" class="btn btn-dark"><i class="bi bi-funnel-fill"></i></button>
+            </div>
+            <div class="col-md-1 d-grid">
+                <a href="<?= basename($_SERVER['PHP_SELF']); ?>" class="btn btn-danger">Limpar</a>
+            </div>
+        </form>
+
+        <!-- Mensagem de sucesso/erro -->
+        <?php if (isset($_GET['msg'])): ?>
+            <div class="alert alert-<?= $_GET['msg'] == 'sucesso' ? 'success' : 'danger' ?>">
+                <strong>
+                    <?= $_GET['msg'] == 'sucesso' ? 'Ocorrência removida com sucesso!' : 'Erro ao processar a solicitação!' ?>
+                </strong>
+            </div>
+        <?php endif; ?>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Turma</th>
+                        <th class="text-center">Qtd. Ocorrências</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Filtros dinâmicos
+                    $filtros = [];
+                    if (!empty($nomeBusca))
+                        $filtros[] = "UPPER(a.nome) LIKE '%$nomeBusca%'";
+                    if (!empty($turmaBusca))
+                        $filtros[] = "a.turma = '$turmaBusca'";
+                    $where = $filtros ? "WHERE " . implode(" AND ", $filtros) : "";
+
+                    $sql = "
                     SELECT a.id, a.nome, a.turma, COUNT(oa.ocorrencia_id) AS total
                     FROM alunos a
                     LEFT JOIN ocorrencia_aluno oa ON a.id = oa.alunos_id
                     $where
                     GROUP BY a.id, a.nome, a.turma
-                    ORDER BY a.nome ASC
+                    ORDER BY $ordenarPor
                 ";
 
-                $result = mysqli_query($conn, $sql);
+                    $result = mysqli_query($conn, $sql);
 
-                if (mysqli_num_rows($result) > 0) {
-                    while ($dados = mysqli_fetch_assoc($result)) {
-                        $id = $dados['id'];
-                        $nome = $dados['nome'];
-                        $turma_id = $dados['turma'];
-                        $total = $dados['total'];
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($dados = mysqli_fetch_assoc($result)) {
+                            $id = $dados['id'];
+                            $nome = $dados['nome'];
+                            $turma_id = $dados['turma'];
+                            $total = $dados['total'];
 
-                        $turma_sql = "SELECT ano, turma FROM turma WHERE id = '$turma_id'";
-                        $res_turma = mysqli_query($conn, $turma_sql);
-                        $turma_dados = mysqli_fetch_assoc($res_turma);
-                        $turma_nome = $turma_dados ? $turma_dados['ano'] . '-' . $turma_dados['turma'] : 'NÃO CADASTRADA';
+                            $turma_sql = "SELECT ano, turma FROM turma WHERE id = '$turma_id'";
+                            $res_turma = mysqli_query($conn, $turma_sql);
+                            $turma_dados = mysqli_fetch_assoc($res_turma);
+                            $turma_nome = $turma_dados ? $turma_dados['ano'] . '-' . $turma_dados['turma'] : 'NÃO CADASTRADA';
 
-                        echo "
+                            echo "
                             <tr>
                                 <td>$id</td>
                                 <td>$nome</td>
@@ -114,44 +149,47 @@ $turmaBusca = isset($_GET['turmaBusca']) ? intval($_GET['turmaBusca']) : '';
                                 </td>
                             </tr>
                         ";
+                        }
+                    } else {
+                        echo "<tr><td colspan='5' class='text-center'>Nenhum aluno encontrado.</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='5' class='text-center'>Nenhum aluno encontrado.</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <button id="btnExport" class="btn btn-success btn-lg px-5">
+                <i class="bi bi-file-earmark-excel"></i> Exportar para Excel
+            </button>
+        </div>
+
     </div>
 
-    <div class="text-center mt-4">
-        <button id="btnExport" class="btn btn-success btn-lg px-5">
-            <i class="bi bi-file-earmark-excel"></i> Exportar para Excel
-        </button>
-    </div>
+    <!-- Bootstrap-select -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/css/bootstrap-select.min.css">
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof $ !== 'undefined' && typeof $.fn.selectpicker !== 'undefined') {
+                $('.selectpicker').selectpicker();
+            }
 
-</div>
-
-<!-- Bootstrap-select -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/css/bootstrap-select.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof $ !== 'undefined' && typeof $.fn.selectpicker !== 'undefined') {
-        $('.selectpicker').selectpicker();
-    }
-
-    // Exportar tabela para Excel
-    document.getElementById('btnExport').addEventListener('click', function() {
-        let table = document.querySelector('table');
-        let html = table.outerHTML;
-        let url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
-        let a = document.createElement('a');
-        a.href = url;
-        a.download = '<?= $exportFilename ?>.xls';
-        a.click();
-    });
-});
-</script>
+            // Exportar tabela para Excel
+            document.getElementById('btnExport').addEventListener('click', function () {
+                let table = document.querySelector('table');
+                let html = table.outerHTML;
+                let url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+                let a = document.createElement('a');
+                a.href = url;
+                a.download = '<?= $exportFilename ?>.xls';
+                a.click();
+            });
+        });
+    </script>
 
 </body>
+
 </html>
