@@ -1,11 +1,25 @@
-<?php 
+<?php
 
-//CONEXÃO COM SERVIDOR
-$conn = mysqli_connect(hostname: 'sql100.infinityfree.com', username: 'if0_40566558', password: 'Raquel0608');
-mysqli_set_charset($conn, "utf8");
+$servidor = "localhost";
+$usuario  = "root";
+$senha    = "";
+$banco    = "sigo";
 
-if($conn){    
-    mysqli_select_db($conn, 'if0_40566558_sigo');
-}else{
-    die('ERRO AO CONECTAR AO BD');  
+/*
+ | Detecta se está em produção (InfinityFree)
+ | No InfinityFree, SERVER_NAME nunca será localhost
+ */
+if ($_SERVER['SERVER_NAME'] !== 'localhost') {
+    $servidor = "sql100.infinityfree.com";
+    $usuario  = "if0_40566558";
+    $senha    = "Raquel0608";
+    $banco    = "if0_40566558_sigo";
 }
+
+$conn = mysqli_connect($servidor, $usuario, $senha, $banco);
+
+if (!$conn) {
+    die("Erro ao conectar no banco: " . mysqli_connect_error());
+}
+
+mysqli_set_charset($conn, "utf8");
