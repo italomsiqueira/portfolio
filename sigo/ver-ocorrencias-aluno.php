@@ -1,6 +1,7 @@
 <?php
 require('includes/protecao.php');
 require('includes/conexao.php');
+$anoBusca = isset($_GET['ano']) ? intval($_GET['ano']) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -122,10 +123,32 @@ include('layout/head.php');
         </div>
 
         <!-- TÍTULO -->
-        <h3 class="text-center mb-4">
-            Ocorrências de <b><?php echo $nome_aluno; ?></b>
-            (<?php echo $turma_aluno; ?>)
-        </h3>
+        <div class="col-md-12">
+            <h3 class="text-center col-md-10 offset-md-1">
+                Ocorrências de <b><?php echo $nome_aluno; ?></b>
+                (<?php echo $turma_aluno; ?>)
+            </h3>
+
+            <form method="GET" class="no-print">
+                <input type="hidden" name="id" value="<?= $aluno_id ?>">
+
+                <div class="col-md-2 offset-md-10">
+                    <select name="ano" class="form-select" onchange="this.form.submit()">
+                        <?php
+                        $anoAtual = date('Y');
+                        $anoInicial = 2024;
+
+                        for ($i = $anoAtual; $i >= $anoInicial; $i--) {
+                            $selected = ($anoBusca == $i) ? 'selected' : '';
+                            echo "<option value='$i' $selected>$i</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            </form>
+
+            <h3></h3>
+        </div>
 
         <!-- TABELA DE OCORRÊNCIAS -->
         <table class="table table-striped">
@@ -141,13 +164,22 @@ include('layout/head.php');
 
             <tbody>
                 <?php
+                $where = "WHERE oa.alunos_id = '$aluno_id'";
+
+                if ($anoBusca > 0) {
+                    $inicio = "$anoBusca-01-01";
+                    $fim = "$anoBusca-12-31";
+                    $where .= " AND o.data BETWEEN '$inicio' AND '$fim'";
+                }
+
                 $sql = "
-                    SELECT o.id, o.descricao, o.data
-                    FROM ocorrencia o
-                    INNER JOIN ocorrencia_aluno oa ON oa.ocorrencia_id = o.id
-                    WHERE oa.alunos_id = '$aluno_id'
-                    ORDER BY o.data DESC
-                ";
+                        SELECT o.id, o.descricao, o.data
+                        FROM ocorrencia o
+                        INNER JOIN ocorrencia_aluno oa ON oa.ocorrencia_id = o.id
+                        $where
+                        ORDER BY o.data DESC
+                    ";
+
                 $res = mysqli_query($conn, $sql);
 
                 if (mysqli_num_rows($res) > 0) {
