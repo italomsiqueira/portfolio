@@ -49,7 +49,8 @@ include('layout/head.php');
                                 <select class="form-select shadow-sm" id="turma" name="turma">
                                     <option value="">Selecione...</option>
                                     <option value="A">A</option>
-                                    <option value="B">B</option>
+                                    <option value="B">B</option>                                    
+                                    <option value="C">C</option>
                                 </select>
                             </div>
 

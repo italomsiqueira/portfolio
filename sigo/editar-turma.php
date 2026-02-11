@@ -66,7 +66,8 @@ include('layout/head.php');
                                 <select class="form-select shadow-sm" id="turma" name="turma">
                                     <option value="">Selecione...</option>
                                     <option value="A" <?= ($turma == 'A') ? 'selected' : '' ?>>A</option>
-                                    <option value="B" <?= ($turma == 'B') ? 'selected' : '' ?>>B</option>
+                                    <option value="B" <?= ($turma == 'B') ? 'selected' : '' ?>>B</option>                                    
+                                    <option value="C" <?= ($turma == 'C') ? 'selected' : '' ?>>C</option>
                                 </select>
                             </div>
 
