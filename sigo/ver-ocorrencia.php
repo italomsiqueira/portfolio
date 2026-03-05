@@ -17,7 +17,11 @@ include('layout/head.php');
 
             /* Zera margens da impressão */
             @page {
-                margin: 20mm;
+                margin: 10mm;
+            }
+
+            body {
+                font-size: 12px;
             }
 
             /* Cabeçalho da escola */
@@ -207,7 +211,8 @@ include('layout/head.php');
                 <a href="listar-ocorrencias.php" class="btn btn-secondary">Voltar</a>
                 <button class="btn btn-success" onclick="window.print()">Imprimir</button>
                 <a href="editar-ocorrencia.php?id=<?php echo $ocorrencia_id; ?>" class="btn btn-warning">Editar</a>
-                <button class="btn btn-danger" onclick="confirmarExclusao(<?php echo $ocorrencia_id; ?>)">Excluir</button>
+                <button class="btn btn-danger"
+                    onclick="confirmarExclusao(<?php echo $ocorrencia_id; ?>)">Excluir</button>
             </div>
         </div>
     </div>
