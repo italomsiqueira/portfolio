@@ -49,7 +49,7 @@ include('layout/head.php');
             .print-assinatura {
                 margin-top: 40px;
                 text-align: center;
-                font-size: 18px;
+                font-size: 15px;
             }
 
             .print-assinatura .linha {
