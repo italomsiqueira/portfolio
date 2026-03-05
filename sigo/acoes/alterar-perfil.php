@@ -18,6 +18,8 @@ if($senha) {
     $sql = "UPDATE usuarios SET nome='$nome' WHERE id='$id'";
 }
 
+$_SESSION['usuario_nome'] = $nome;
+
 if(mysqli_query($conn, $sql)) {
     header('Location: ../perfil.php?msg=Perfil atualizado com sucesso!');
 } else {
