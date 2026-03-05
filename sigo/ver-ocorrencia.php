@@ -15,6 +15,7 @@ include('layout/head.php');
         /* Esconde os itens da tela e mostra apenas na impressão */
         @media print {
 
+
             /* Zera margens da impressão */
             @page {
                 margin: 10mm;
@@ -245,6 +246,14 @@ include('layout/head.php');
 
             .no-print {
                 display: none !important;
+            }
+
+            .card,
+            .shadow,
+            .shadow-sm,
+            .shadow-lg {
+                box-shadow: none !important;
+                border-radius: 0 !important;
             }
         }
     </style>
