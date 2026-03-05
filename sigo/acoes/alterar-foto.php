@@ -17,4 +17,6 @@ move_uploaded_file($_FILES['foto']['tmp_name'], '../'.$novoNome);
 $sql = "UPDATE usuarios SET foto='$novoNome' WHERE id='$usuario_id'";
 mysqli_query($conn, $sql);
 
+$_SESSION['usuario_foto'] = $novoNome;
+
 header('Location: ../perfil.php?msg=Foto atualizada com sucesso!');
