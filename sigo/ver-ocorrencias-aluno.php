@@ -1,8 +1,10 @@
 <?php
 require('includes/protecao.php');
 require('includes/conexao.php');
+
 $anoBusca = isset($_GET['ano']) ? intval($_GET['ano']) : 0;
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -13,7 +15,6 @@ include('layout/head.php');
 
 <head>
     <style>
-        /* ----------- ESTILOS DE IMPRESSÃO ----------- */
         .print-only {
             display: none !important;
         }
@@ -28,7 +29,6 @@ include('layout/head.php');
                 display: block !important;
             }
 
-            /* Cabeçalho da escola */
             .print-header {
                 text-align: center;
                 margin-bottom: 20px;
@@ -52,12 +52,10 @@ include('layout/head.php');
                 font-size: 15px;
             }
 
-            /* Esconder itens que NÃO imprimem */
             .no-print {
                 display: none !important;
             }
 
-            /* Melhorar a tabela para impressão */
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -78,6 +76,7 @@ include('layout/head.php');
             body {
                 background: white !important;
             }
+
         }
     </style>
 </head>
@@ -89,6 +88,7 @@ include('layout/head.php');
     <div class="container mt-4">
 
         <?php
+
         if (!isset($_GET['id']) || empty($_GET['id'])) {
             echo "<div class='alert alert-danger'>Aluno não encontrado!</div>";
             exit;
@@ -96,13 +96,13 @@ include('layout/head.php');
 
         $aluno_id = intval($_GET['id']);
 
-        // Dados do aluno
         $sql_aluno = "
-            SELECT a.nome, t.ano, t.turma 
-            FROM alunos a 
-            LEFT JOIN turma t ON a.turma = t.id 
-            WHERE a.id = '$aluno_id'
-        ";
+SELECT a.nome,t.ano,t.turma
+FROM alunos a
+LEFT JOIN turma t ON a.turma=t.id
+WHERE a.id='$aluno_id'
+";
+
         $res_aluno = mysqli_query($conn, $sql_aluno);
         $dados_aluno = mysqli_fetch_assoc($res_aluno);
 
@@ -113,45 +113,59 @@ include('layout/head.php');
 
         $nome_aluno = $dados_aluno['nome'];
         $turma_aluno = $dados_aluno['ano'] . '-' . $dados_aluno['turma'];
+
         ?>
 
-        <!-- CABEÇALHO APENAS NA IMPRESSÃO -->
         <div class="print-header print-only">
-            <img src="assets/img/logo_escola.png" alt="Logo da Escola">
+            <img src="assets/img/logo_escola.png">
             <h2>E.E.F. PROFESSORA LAURA ALENCAR</h2>
             <h4>Sistema Integrado de Gestão de Ocorrências</h4>
         </div>
 
-        <!-- TÍTULO -->
         <div class="col-md-12">
+
             <h3 class="text-center col-md-10 offset-md-1">
                 Ocorrências de <b><?php echo $nome_aluno; ?></b>
                 (<?php echo $turma_aluno; ?>)
             </h3>
 
             <form method="GET" class="no-print">
+
                 <input type="hidden" name="id" value="<?= $aluno_id ?>">
 
                 <div class="col-md-2 offset-md-10">
+
                     <select name="ano" class="form-select" onchange="this.form.submit()">
+
                         <?php
+
                         $anoAtual = date('Y');
                         $anoInicial = 2024;
 
+                        $selected = ($anoBusca == 0) ? 'selected' : '';
+                        echo "<option value='0' $selected>Todos os anos</option>";
+
                         for ($i = $anoAtual; $i >= $anoInicial; $i--) {
+
                             $selected = ($anoBusca == $i) ? 'selected' : '';
                             echo "<option value='$i' $selected>$i</option>";
+
                         }
+
                         ?>
+
                     </select>
+
                 </div>
+
             </form>
 
             <h3></h3>
+
         </div>
 
-        <!-- TABELA DE OCORRÊNCIAS -->
         <table class="table table-striped">
+
             <thead class="table-dark">
                 <tr>
                     <th>ID</th>
@@ -161,61 +175,147 @@ include('layout/head.php');
                 </tr>
             </thead>
 
-
             <tbody>
+
                 <?php
-                $where = "WHERE oa.alunos_id = '$aluno_id'";
+
+                $whereOcorrencia = "oa.alunos_id='$aluno_id'";
+                $whereSuspensao = "s.aluno_id='$aluno_id'";
 
                 if ($anoBusca > 0) {
+
                     $inicio = "$anoBusca-01-01";
                     $fim = "$anoBusca-12-31";
-                    $where .= " AND o.data BETWEEN '$inicio' AND '$fim'";
+
+                    $whereOcorrencia .= " AND o.data BETWEEN '$inicio' AND '$fim'";
+                    $whereSuspensao .= " AND s.data_inicio BETWEEN '$inicio' AND '$fim'";
+
                 }
 
                 $sql = "
-                        SELECT o.id, o.descricao, o.data
-                        FROM ocorrencia o
-                        INNER JOIN ocorrencia_aluno oa ON oa.ocorrencia_id = o.id
-                        $where
-                        ORDER BY o.data DESC
-                    ";
+
+SELECT
+o.id,
+o.data,
+o.descricao,
+'ocorrencia' AS tipo
+
+FROM ocorrencia o
+INNER JOIN ocorrencia_aluno oa 
+ON oa.ocorrencia_id = o.id
+
+WHERE $whereOcorrencia
+
+UNION ALL
+
+SELECT
+s.id,
+s.data_inicio AS data,
+CONCAT(
+'<i class=\"bi bi-exclamation-triangle-fill text-danger me-1\"></i> Suspensão até ',
+DATE_FORMAT(s.data_fim,'%d/%m/%Y'),
+' - ',
+s.motivo
+) AS descricao,
+'suspensao' AS tipo
+
+FROM suspensoes s
+INNER JOIN suspensao_aluno sa
+ON sa.suspensao_id = s.id
+
+WHERE sa.alunos_id = '$aluno_id'
+
+";
+
+                if ($anoBusca > 0) {
+
+                    $inicio = "$anoBusca-01-01";
+                    $fim = "$anoBusca-12-31";
+
+                    $sql .= " AND s.data_inicio BETWEEN '$inicio' AND '$fim'";
+
+                }
+
+                $sql .= "
+
+ORDER BY data DESC
+
+";
 
                 $res = mysqli_query($conn, $sql);
 
                 if (mysqli_num_rows($res) > 0) {
+
                     while ($oc = mysqli_fetch_assoc($res)) {
+
                         $id = $oc['id'];
-                        $descricao = $oc['descricao'];
                         $data = date('d/m/Y', strtotime($oc['data']));
+                        $descricao = $oc['descricao'];
+                        $tipo = $oc['tipo'];
+
+                        $classe = "";
+                        $botao = "";
+
+                        if ($tipo == "suspensao") {
+
+                            $classe = "table-danger";
+
+                            $botao = "<a href='ver-suspensao.php?id=$id'>
+<button class='btn btn-sm btn-danger'>Ver</button>
+</a>";
+
+                        } else {
+
+                            $botao = "<a href='ver-ocorrencia.php?id=$id'>
+<button class='btn btn-sm btn-info'>Ver</button>
+</a>";
+
+                        }
 
                         echo "
-                        <tr>
-                            <td>$id</td>
-                            <td>$data</td>
-                            <td>$descricao</td>
 
-                            <td class='no-print'>
-                                <a href='ver-ocorrencia.php?id=$id'>
-                                    <button class='btn btn-sm btn-info'>Ver</button>
-                                </a>
-                            </td>
-                        </tr>
-                        ";
+<tr class='$classe'>
+
+<td>$id</td>
+<td>$data</td>
+<td>$descricao</td>
+
+<td class='no-print'>
+$botao
+</td>
+
+</tr>
+
+";
+
                     }
+
                 } else {
-                    echo "<tr><td colspan='4' class='text-center'>Nenhuma ocorrência registrada para este aluno.</td></tr>";
+
+                    echo "<tr><td colspan='4' class='text-center'>Nenhum registro encontrado.</td></tr>";
+
                 }
+
                 ?>
+
             </tbody>
+
         </table>
 
-        <!-- BOTÕES (SOMENTE NA TELA) -->
         <div class="text-center mt-4 no-print">
-            <a href="listar-ocorrencias.php" class="btn btn-dark">Voltar à lista</a>
-            <button onclick="window.print()" class="btn btn-success">Imprimir</button>
+
+            <a href="listar-ocorrencias.php" class="btn btn-dark">
+                Voltar à lista
+            </a>
+
+            <button onclick="window.print()" class="btn btn-success">
+                Imprimir
+            </button>
+
         </div>
 
     </div>
+
 </body>
 
 </html>

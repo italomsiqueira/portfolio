@@ -56,6 +56,16 @@ $usuarioFoto = $_SESSION['usuario_foto'] ?? 'assets/img/user-placeholder.png';
           </ul>
         </li>
 
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>Suspensões
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="cadastrar-suspensao.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar suspensão</a></li>
+            <li><a class="dropdown-item" href="listar-suspensoes.php"><i class="bi bi-list-ul me-1"></i>Ver todas</a></li>
+          </ul>
+        </li>
+
         <!-- Link para gerenciar usuários, visível apenas para administradores -->
         <?php if ($usuarioNivel === 'admin'): ?>
           <li class="nav-item">

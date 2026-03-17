@@ -6,18 +6,60 @@ require('includes/conexao.php');
 $total_alunos = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM alunos"))['total'] ?? 0;
 $total_turmas = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM turma"))['total'] ?? 0;
 $total_ocorrencias = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM ocorrencia"))['total'] ?? 0;
+// ================= SUSPENSÕES =================
+
+// total de suspensões cadastradas
+$total_suspensoes = mysqli_fetch_assoc(
+    mysqli_query($conn, "SELECT COUNT(*) AS total FROM suspensoes")
+)['total'] ?? 0;
+
+// suspensões ativas hoje
+$total_suspensoes_ativas = mysqli_fetch_assoc(
+    mysqli_query($conn, "SELECT COUNT(*) AS total 
+    FROM suspensoes 
+    WHERE CURDATE() BETWEEN data_inicio AND data_fim")
+)['total'] ?? 0;
+
+
+// alunos suspensos hoje
+$sql_suspensos_hoje = "
+
+SELECT
+a.nome,
+t.ano,
+t.turma,
+s.data_fim
+
+FROM suspensoes s
+
+INNER JOIN suspensao_aluno sa
+ON sa.suspensao_id = s.id
+
+INNER JOIN alunos a
+ON a.id = sa.alunos_id
+
+LEFT JOIN turma t
+ON t.id = a.turma
+
+WHERE CURDATE() BETWEEN s.data_inicio AND s.data_fim
+
+ORDER BY t.ano, t.turma, a.nome
+
+";
+
+$res_suspensos_hoje = mysqli_query($conn, $sql_suspensos_hoje);
 
 // ========== Preparar dados do gráfico comparativo (mês atual x mês passado) ==========
 // Note: tabela correta é "ocorrencia" (singular) conforme suas outras páginas.
 // Ajuste aqui se a sua tabela tiver nome diferente.
 
 $hoje = new DateTime(); // hoje
-$anoAtual = (int)$hoje->format('Y');
-$mesAtual = (int)$hoje->format('m');
+$anoAtual = (int) $hoje->format('Y');
+$mesAtual = (int) $hoje->format('m');
 
 $mesPassadoDT = (clone $hoje)->modify('-1 month');
-$anoPassado = (int)$mesPassadoDT->format('Y');
-$mesPassado = (int)$mesPassadoDT->format('m');
+$anoPassado = (int) $mesPassadoDT->format('Y');
+$mesPassado = (int) $mesPassadoDT->format('m');
 
 // MAPEAMENTO DE MESES EM PORTUGUÊS
 $meses_pt = [
@@ -54,7 +96,7 @@ $sql_atual = "
 $res_atual = mysqli_query($conn, $sql_atual);
 $dados_mes_atual = [];
 while ($r = mysqli_fetch_assoc($res_atual)) {
-    $dados_mes_atual[$r['dia']] = (int)$r['total'];
+    $dados_mes_atual[$r['dia']] = (int) $r['total'];
 }
 
 // buscar ocorrências agrupadas por data (dia) para mês passado
@@ -68,7 +110,7 @@ $sql_passado = "
 $res_passado = mysqli_query($conn, $sql_passado);
 $dados_mes_passado = [];
 while ($r = mysqli_fetch_assoc($res_passado)) {
-    $dados_mes_passado[$r['dia']] = (int)$r['total'];
+    $dados_mes_passado[$r['dia']] = (int) $r['total'];
 }
 
 // montar labels e valores alinhados por dia do mês atual (1..N)
@@ -103,137 +145,273 @@ for ($d = 1; $d <= $daysInCurrentMonth; $d++) {
 $titulo = "Dashboard";
 include('layout/head.php');
 ?>
+
 <body>
-<?php include('layout/menu.php'); ?>
+    <?php include('layout/menu.php'); ?>
 
-<div class="container mt-5">
+    <div class="container mt-5">
 
-    <!-- LOGO E TÍTULO -->
-    <div class="text-center mb-4">
-        <img src="assets/img/logo.png" alt="Logo" style="max-width:140px;" class="mb-3">
-        <h1 class="fw-bold">Dashboard</h1>
-        <p class="text-muted">Visão geral do sistema</p>
-    </div>
+        <!-- LOGO E TÍTULO -->
+        <div class="text-center mb-4">
+            <img src="assets/img/logo.png" alt="Logo" style="max-width:140px;" class="mb-3">
+            <h1 class="fw-bold">Dashboard</h1>
+            <p class="text-muted">Visão geral do sistema</p>
+        </div>
 
-    <!-- CARDS -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm card-home p-3">
-                <div class="card-body text-center">
-                    <i class="bi bi-people-fill display-4 text-primary mb-2"></i>
-                    <h5>Alunos</h5>
-                    <h2 class="fw-bold text-primary"><?= (int)$total_alunos ?></h2>
-                    <div class="d-grid gap-2 mt-3">
-                        <a href="listar-alunos.php" class="btn btn-outline-primary rounded-pill">Ver Lista</a>
-                        <a href="cadastrar-aluno.php" class="btn btn-primary rounded-pill">Cadastrar Novo</a>
+        <!-- CARDS -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm card-home p-3">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people-fill display-4 text-primary mb-2"></i>
+                        <h5>Alunos</h5>
+                        <h2 class="fw-bold text-primary"><?= (int) $total_alunos ?></h2>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="listar-alunos.php" class="btn btn-outline-primary rounded-pill">Ver Lista</a>
+                            <a href="cadastrar-aluno.php" class="btn btn-primary rounded-pill">Cadastrar Novo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm card-home p-3">
+                    <div class="card-body text-center">
+                        <i class="bi bi-journal-bookmark-fill display-4 text-success mb-2"></i>
+                        <h5>Turmas</h5>
+                        <h2 class="fw-bold text-success"><?= (int) $total_turmas ?></h2>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="listar-turmas.php" class="btn btn-outline-success rounded-pill">Ver Lista</a>
+                            <a href="cadastrar-turma.php" class="btn btn-success rounded-pill">Cadastrar Nova</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm card-home p-3">
+                    <div class="card-body text-center">
+                        <i class="bi bi-exclamation-circle-fill display-4 text-danger mb-2"></i>
+                        <h5>Ocorrências</h5>
+                        <h2 class="fw-bold text-danger"><?= (int) $total_ocorrencias ?></h2>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="listar-ocorrencias.php" class="btn btn-outline-danger rounded-pill">Ver Lista</a>
+                            <a href="cadastrar-ocorrencia.php" class="btn btn-danger rounded-pill">Registrar Nova</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm card-home p-3">
-                <div class="card-body text-center">
-                    <i class="bi bi-journal-bookmark-fill display-4 text-success mb-2"></i>
-                    <h5>Turmas</h5>
-                    <h2 class="fw-bold text-success"><?= (int)$total_turmas ?></h2>
-                    <div class="d-grid gap-2 mt-3">
-                        <a href="listar-turmas.php" class="btn btn-outline-success rounded-pill">Ver Lista</a>
-                        <a href="cadastrar-turma.php" class="btn btn-success rounded-pill">Cadastrar Nova</a>
+        <!-- SUSPENSÕES -->
+        <div class="row g-4 mb-4 align-items-stretch">
+
+            <!-- CARD SUSPENSÕES -->
+            <div class="col-md-4">
+
+                <div class="card shadow-sm card-home p-3 border-danger h-100">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-exclamation-triangle-fill display-4 text-danger mb-2"></i>
+
+                        <h5>Suspensões</h5>
+
+                        <h2 class="fw-bold text-danger">
+                            <?= (int) $total_suspensoes ?>
+                        </h2>
+
+                        <p class="text-muted mb-1">
+                            Total cadastradas
+                        </p>
+
+                        <hr>
+
+                        <h4 class="fw-bold text-danger">
+                            <?= (int) $total_suspensoes_ativas ?>
+                        </h4>
+
+                        <p class="text-muted">
+                            Ativas hoje
+                        </p>
+
+                        <div class="d-grid gap-2">
+
+                            <a href="listar-suspensoes.php" class="btn btn-outline-danger rounded-pill">
+                                Ver Suspensões
+                            </a>
+
+                            <a href="cadastrar-suspensao.php" class="btn btn-danger rounded-pill">
+                                Nova Suspensão
+                            </a>
+
+                        </div>
+
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm card-home p-3">
-                <div class="card-body text-center">
-                    <i class="bi bi-exclamation-circle-fill display-4 text-danger mb-2"></i>
-                    <h5>Ocorrências</h5>
-                    <h2 class="fw-bold text-danger"><?= (int)$total_ocorrencias ?></h2>
-                    <div class="d-grid gap-2 mt-3">
-                        <a href="listar-ocorrencias.php" class="btn btn-outline-danger rounded-pill">Ver Lista</a>
-                        <a href="cadastrar-ocorrencia.php" class="btn btn-danger rounded-pill">Registrar Nova</a>
+                </div>
+
+            </div>
+
+
+            <!-- TABELA SUSPENSOS HOJE -->
+            <div class="col-md-8">
+
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header bg-danger text-white">
+                        <i class="bi bi-person-x-fill"></i>
+                        Alunos suspensos hoje
                     </div>
+
+                    <div class="card-body p-0 d-flex flex-column">
+
+                        <div class="table-responsive flex-grow-1">
+
+                            <table class="table table-striped table-hover mb-0">
+
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Aluno</th>
+                                        <th>Turma</th>
+                                        <th>Até</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <?php
+
+                                    if (mysqli_num_rows($res_suspensos_hoje) > 0) {
+
+                                        while ($aluno = mysqli_fetch_assoc($res_suspensos_hoje)) {
+
+                                            $nome = $aluno['nome'];
+                                            $turma = $aluno['ano'] . "º " . $aluno['turma'];
+                                            $fim = date('d/m/Y', strtotime($aluno['data_fim']));
+
+                                            echo "
+
+                                <tr>
+
+                                <td>$nome</td>
+                                <td>$turma</td>
+                                <td class='text-danger fw-bold'>$fim</td>
+
+                                </tr>
+
+                                ";
+
+                                        }
+
+                                    } else {
+
+                                        echo "
+                            <tr>
+                            <td colspan='3' class='text-center text-muted'>
+                            Nenhum aluno suspenso hoje
+                            </td>
+                            </tr>
+                            ";
+
+                                    }
+
+                                    ?>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
                 </div>
+
             </div>
+
+            <!-- GRÁFICO COMPARATIVO -->
+            <div class="card shadow-sm p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="m-0">Comparativo: Mês Atual x Mês Passado</h4>
+                    <small class="text-muted">
+                        <?= $mesAtualTexto ?> &nbsp; vs &nbsp; <?= $mesPassadoTexto ?>
+                    </small>
+                </div>
+                <canvas id="graficoOcorrencias" height="120"></canvas>
+            </div>
+
         </div>
-    </div>
 
-    <!-- GRÁFICO COMPARATIVO -->
-    <div class="card shadow-sm p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="m-0">Comparativo: Mês Atual x Mês Passado</h4>
-            <small class="text-muted">
-                <?= $mesAtualTexto ?> &nbsp; vs &nbsp; <?= $mesPassadoTexto ?>
-            </small>
-        </div>
-        <canvas id="graficoOcorrencias" height="120"></canvas>
-    </div>
-
-</div>
-
-<!-- estilos leves -->
-<style>
-.card-home { border-radius: 12px; transition: transform .18s ease, box-shadow .18s ease; }
-.card-home:hover { transform: translateY(-6px); box-shadow: 0 12px 28px rgba(0,0,0,.12) !important; }
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const labels = <?= json_encode($labels, JSON_UNESCAPED_UNICODE); ?>;
-const dadosAtual = <?= json_encode($valores_atual); ?>;
-const dadosPassado = <?= json_encode($valores_passado); ?>;
-
-const ctx = document.getElementById('graficoOcorrencias').getContext('2d');
-const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Mês Atual',
-                data: dadosAtual,
-                borderColor: '#dc3545',
-                backgroundColor: 'rgba(220,53,69,0.12)',
-                fill: true,
-                tension: 0.35,
-                borderWidth: 3,
-                pointRadius: 4
-            },
-            {
-                label: 'Mês Passado',
-                data: dadosPassado,
-                borderColor: '#6c757d',
-                backgroundColor: 'rgba(108,117,125,0.06)',
-                fill: true,
-                tension: 0.35,
-                borderWidth: 2,
-                borderDash: [6,4],
-                pointRadius: 3
+        <!-- estilos leves -->
+        <style>
+            .card-home {
+                border-radius: 12px;
+                transition: transform .18s ease, box-shadow .18s ease;
             }
-        ]
-    },
-    options: {
-        responsive: true,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-            legend: { position: 'top' },
-            tooltip: {
-                callbacks: {
-                    label: function(ctx) {
-                        return ctx.dataset.label + ': ' + ctx.parsed.y + ' ocorrência(s)';
-                    }
+
+            .card-home:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 12px 28px rgba(0, 0, 0, .12) !important;
+            }
+        </style>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const labels = <?= json_encode($labels, JSON_UNESCAPED_UNICODE); ?>;
+            const dadosAtual = <?= json_encode($valores_atual); ?>;
+            const dadosPassado = <?= json_encode($valores_passado); ?>;
+
+            const ctx = document.getElementById('graficoOcorrencias').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Mês Atual',
+                            data: dadosAtual,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220,53,69,0.12)',
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 3,
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Mês Passado',
+                            data: dadosPassado,
+                            borderColor: '#6c757d',
+                            backgroundColor: 'rgba(108,117,125,0.06)',
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 2,
+                            borderDash: [6, 4],
+                            pointRadius: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (ctx) {
+                                    return ctx.dataset.label + ': ' + ctx.parsed.y + ' ocorrência(s)';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    },
+                    animation: { duration: 700, easing: 'easeOutQuart' }
                 }
-            }
-        },
-        scales: {
-            y: { beginAtZero: true, ticks: { precision: 0 } }
-        },
-        animation: { duration: 700, easing: 'easeOutQuart' }
-    }
-});
-</script>
+            });
+        </script>
 
 </body>
+
 </html>
