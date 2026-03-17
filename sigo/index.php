@@ -191,12 +191,12 @@ include('layout/head.php');
             <div class="col-md-4">
                 <div class="card shadow-sm card-home p-3">
                     <div class="card-body text-center">
-                        <i class="bi bi-exclamation-circle-fill display-4 text-danger mb-2"></i>
+                        <i class="bi bi-exclamation-circle-fill display-4 text-warning mb-2"></i>
                         <h5>Ocorrências</h5>
-                        <h2 class="fw-bold text-danger"><?= (int) $total_ocorrencias ?></h2>
+                        <h2 class="fw-bold text-warning"><?= (int) $total_ocorrencias ?></h2>
                         <div class="d-grid gap-2 mt-3">
-                            <a href="listar-ocorrencias.php" class="btn btn-outline-danger rounded-pill">Ver Lista</a>
-                            <a href="cadastrar-ocorrencia.php" class="btn btn-danger rounded-pill">Registrar Nova</a>
+                            <a href="listar-ocorrencias.php" class="btn btn-outline-warning rounded-pill">Ver Lista</a>
+                            <a href="cadastrar-ocorrencia.php" class="btn btn-warning rounded-pill">Registrar Nova</a>
                         </div>
                     </div>
                 </div>
