@@ -13,7 +13,8 @@ $usuarioFoto = $_SESSION['usuario_foto'] ?? 'assets/img/user-placeholder.png';
     </a>
 
     <!-- Botão mobile -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+      aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -30,7 +31,8 @@ $usuarioFoto = $_SESSION['usuario_foto'] ?? 'assets/img/user-placeholder.png';
             <i class="bi bi-people-fill me-1"></i>Turma
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="cadastrar-turma.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar turma</a></li>
+            <li><a class="dropdown-item" href="cadastrar-turma.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar
+                turma</a></li>
             <li><a class="dropdown-item" href="listar-turmas.php"><i class="bi bi-list-ul me-1"></i>Ver turmas</a></li>
           </ul>
         </li>
@@ -40,7 +42,8 @@ $usuarioFoto = $_SESSION['usuario_foto'] ?? 'assets/img/user-placeholder.png';
             <i class="bi bi-person-fill me-1"></i>Aluno
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="cadastrar-aluno.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar aluno</a></li>
+            <li><a class="dropdown-item" href="cadastrar-aluno.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar
+                aluno</a></li>
             <li><a class="dropdown-item" href="listar-alunos.php"><i class="bi bi-list-ul me-1"></i>Ver alunos</a></li>
           </ul>
         </li>
@@ -50,9 +53,12 @@ $usuarioFoto = $_SESSION['usuario_foto'] ?? 'assets/img/user-placeholder.png';
             <i class="bi bi-exclamation-circle-fill me-1"></i>Ocorrências
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="cadastrar-ocorrencia.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar ocorrência</a></li>
-            <li><a class="dropdown-item" href="contagem-ocorrencias.php"><i class="bi bi-bar-chart-fill me-1"></i>Qtd ocorrência</a></li>
-            <li><a class="dropdown-item" href="listar-ocorrencias.php"><i class="bi bi-list-ul me-1"></i>Ver todas</a></li>
+            <li><a class="dropdown-item" href="cadastrar-ocorrencia.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar
+                ocorrência</a></li>
+            <li><a class="dropdown-item" href="contagem-ocorrencias.php"><i class="bi bi-bar-chart-fill me-1"></i>Qtd
+                ocorrência</a></li>
+            <li><a class="dropdown-item" href="listar-ocorrencias.php"><i class="bi bi-list-ul me-1"></i>Ver todas</a>
+            </li>
           </ul>
         </li>
 
@@ -61,10 +67,20 @@ $usuarioFoto = $_SESSION['usuario_foto'] ?? 'assets/img/user-placeholder.png';
             <i class="bi bi-exclamation-triangle-fill me-1"></i>Suspensões
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="cadastrar-suspensao.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar suspensão</a></li>
-            <li><a class="dropdown-item" href="listar-suspensoes.php"><i class="bi bi-list-ul me-1"></i>Ver todas</a></li>
+            <li><a class="dropdown-item" href="cadastrar-suspensao.php"><i class="bi bi-plus-circle me-1"></i>Cadastrar
+                suspensão</a></li>
+            <li><a class="dropdown-item" href="listar-suspensoes.php"><i class="bi bi-list-ul me-1"></i>Ver todas</a>
+            </li>
           </ul>
         </li>
+
+        <?php if (isset($_SESSION['usuario_login']) && $_SESSION['usuario_login'] === 'italo'): ?>
+          <li class="nav-item">
+            <a class="nav-link" href="logos-sistema.php">
+              <i class="bi bi-image-fill me-1"></i>Logos
+            </a>
+          </li>
+        <?php endif; ?>
 
         <!-- Link para gerenciar usuários, visível apenas para administradores -->
         <?php if ($usuarioNivel === 'admin'): ?>
@@ -80,7 +96,8 @@ $usuarioFoto = $_SESSION['usuario_foto'] ?? 'assets/img/user-placeholder.png';
       <!-- Perfil do usuário à direita -->
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
             <img src="<?= $usuarioFoto ?>" class="rounded-circle me-2" width="35" height="35" alt="Foto">
             <div class="d-flex flex-column">
               <span class="fw-bold text-white"><?= $usuarioNome ?></span>
