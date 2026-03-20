@@ -56,6 +56,10 @@ include('layout/menu.php');
 
                     <?php endforeach; ?>
 
+                    <a href="acoes/gerar-atalho.php" class="btn btn-primary btn-lg">
+                        <i class="bi bi-download me-2"></i>Baixar Atalho do Sistema
+                    </a>
+                    
                 </div>
 
             </div>
