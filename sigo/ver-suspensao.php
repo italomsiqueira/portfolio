@@ -133,7 +133,7 @@ include('layout/head.php');
                 <thead class="table-dark">
                     <tr>
                         <th>Nome</th>
-                        <th>CPF</th>
+                        <th width="20%">CPF</th>
                         <th width="37%">Assinatura</th>
                     </tr>
                 </thead>
