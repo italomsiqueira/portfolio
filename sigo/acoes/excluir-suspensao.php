@@ -39,7 +39,7 @@ try {
 
     mysqli_commit($conn);
 
-    header("Location: ../listar-suspensoes.php?msg=excluido");
+    header("Location: ../listar-suspensoes.php?msg=sucesso");
     exit;
 
 } catch (Exception $e) {

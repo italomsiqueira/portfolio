@@ -6,66 +6,97 @@ require('includes/conexao.php');
 <html lang="pt-BR">
 
 <?php
-$titulo = "Detalhes da Suspensão";
+$titulo = "Aviso de Suspensão";
 include('layout/head.php');
 ?>
 
 <head>
+
     <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        .aviso {
+            background: #fff;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .print-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 400px;
+            margin-bottom: 10px;
+        }
+
+        .texto-escola {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .titulo-documento {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 40px 0;
+        }
+
+        .texto-justificado {
+            text-align: justify;
+            line-height: 2;
+            font-size: 15px;
+        }
+
+        .assinatura {
+            margin-top: 100px;
+            text-align: center;
+        }
+
+        .linha-assinatura {
+            border-top: 1px solid #000;
+            width: 300px;
+            margin: 70px auto 10px;
+        }
+
+        .no-print {
+            text-align: center;
+            margin: 30px 0;
+        }
+
         @media print {
 
             @page {
-                margin: 10mm;
+                margin: 20mm;
             }
 
             body {
-                font-size: 12px;
+                background: #fff;
+                font-family: "Times New Roman", serif;
+                font-size: 14pt;
             }
 
-            .print-header {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                margin-bottom: 20px;
-                border-bottom: 1px solid #000;
-                padding-bottom: 10px;
-            }
-
-            .print-header img {
-                width: 80px;
-            }
-
-            .print-assinatura {
-                margin-top: 40px;
-                text-align: center;
-                font-size: 15px;
-            }
-
-            .print-assinatura .linha {
-                margin-top: 60px;
-                border-top: 2px solid #000;
-                width: 60%;
-                margin-left: auto;
-                margin-right: auto;
-                padding-top: 5px;
-            }
-
-            .no-print {
+            .no-print,
+            .menu,
+            nav,
+            footer {
                 display: none !important;
             }
 
-        }
-
-        .print-only {
-            display: none;
-        }
-
-        @media print {
-            .print-only {
-                display: block;
+            .aviso {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                page-break-after: always;
             }
+
         }
     </style>
+
 </head>
 
 <body>
@@ -77,187 +108,213 @@ include('layout/head.php');
         <?php
 
         if (!isset($_GET['id']) || empty($_GET['id'])) {
+
             echo "<div class='alert alert-danger'>Suspensão não encontrada!</div>";
             exit;
+
         }
 
         $suspensao_id = intval($_GET['id']);
 
         $sql = "SELECT * FROM suspensoes WHERE id=$suspensao_id";
         $res = mysqli_query($conn, $sql);
+
         $susp = mysqli_fetch_assoc($res);
 
         if (!$susp) {
+
             echo "<div class='alert alert-danger'>Suspensão não encontrada!</div>";
             exit;
+
         }
 
         $data_inicio = date('d/m/Y', strtotime($susp['data_inicio']));
         $data_fim = date('d/m/Y', strtotime($susp['data_fim']));
         $motivo = nl2br($susp['motivo']);
 
-        ?>
-
-        <div class="card shadow-lg p-4">
-
-            <div class="print-only">
-
-                <div class="print-header">
-                    <img src="assets/img/logo_escola.png">
-
-                    <div>
-                        <h5>E.E.F. PROFESSORA LAURA ALENCAR</h5>
-                        <h6>Sistema Integrado de Gestão de Ocorrências</h6>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <h3 class="text-center mb-4">
-                <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
-                Suspensão Nº <strong><?php echo $suspensao_id; ?></strong>
-            </h3>
-
-            <p><strong>Data de Início:</strong> <?php echo $data_inicio; ?></p>
-            <p><strong>Data de Fim:</strong> <?php echo $data_fim; ?></p>
-
-            <p><strong>Motivo:</strong><br><?php echo $motivo; ?></p>
-
-            <hr>
-
-            <h5>Alunos Suspensos:</h5>
-
-            <table class="table table-bordered mt-3">
-
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nome</th>
-                        <th width="20%">CPF</th>
-                        <th width="37%">Assinatura</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    <?php
-
-                    $sql_alunos = "
+        $sql_alunos = "
 SELECT 
+
 a.nome,
 a.cpf,
+a.data_nascimento,
+a.responsavel,
+
 t.ano,
 t.turma
 
 FROM suspensao_aluno sa
-INNER JOIN alunos a ON a.id=sa.alunos_id
-LEFT JOIN turma t ON t.id=a.turma
 
-WHERE sa.suspensao_id=$suspensao_id
+INNER JOIN alunos a 
+ON a.id = sa.alunos_id
 
-ORDER BY t.ano,t.turma,a.nome
+LEFT JOIN turma t 
+ON t.id = a.turma
+
+WHERE sa.suspensao_id = $suspensao_id
+
+ORDER BY t.ano, t.turma, a.nome
 ";
 
-                    $res_alunos = mysqli_query($conn, $sql_alunos);
+        $res_alunos = mysqli_query($conn, $sql_alunos);
 
-                    if (mysqli_num_rows($res_alunos) > 0) {
+        if (mysqli_num_rows($res_alunos) > 0) {
 
-                        while ($aluno = mysqli_fetch_assoc($res_alunos)) {
+            while ($aluno = mysqli_fetch_assoc($res_alunos)) {
 
-                            $turma = "";
+                $nome_aluno = $aluno['nome'];
 
-                            if (!empty($aluno['ano']) || !empty($aluno['turma'])) {
-                                $turma = "{$aluno['ano']}{$aluno['turma']} - ";
-                            }
+                $responsavel = !empty($aluno['responsavel'])
+                    ? $aluno['responsavel']
+                    : "Responsável";
 
-                            echo "
+                $data_nascimento = !empty($aluno['data_nascimento'])
+                    ? date('d/m/Y', strtotime($aluno['data_nascimento']))
+                    : "";
 
-<tr>
-<td>$turma {$aluno['nome']}</td>
-<td>{$aluno['cpf']}</td>
-<td></td>
-</tr>
+                $turma = "{$aluno['ano']}º ano - Turma {$aluno['turma']}";
 
-";
+                $dias = 1;
 
-                        }
+                $inicio = new DateTime($susp['data_inicio']);
+                $fim = new DateTime($susp['data_fim']);
 
-                    } else {
+                $intervalo = $inicio->diff($fim);
 
-                        echo "<tr><td colspan='3' class='text-center'>Nenhum aluno vinculado.</td></tr>";
+                $dias = $intervalo->days + 1;
 
-                    }
+                ?>
 
-                    ?>
+                <div class="aviso">
 
-                </tbody>
-            </table>
+                    <div class="print-header">
 
-            <div class="text-center mt-4 no-print">
+                        <img src="assets/img/logo_seduc.png" class="logo">
 
-                <a href="listar-ocorrencias.php" class="btn btn-secondary">Voltar</a>
+                        <div class="texto-escola">
 
-                <button class="btn btn-success" onclick="window.print()">Imprimir</button>
+                            <strong>
+                                ESCOLA DE ENSINO FUNDAMENTAL PROFESSORA LAURA ALENCAR
+                            </strong>
+                            <br>
 
-                <a href="editar-suspensao.php?id=<?php echo $suspensao_id; ?>" class="btn btn-warning">
-                    Editar
-                </a>
+                            RUA CASEMIRO FIÚZA BENEVIDES S/N – MOMBAÇA-CE
+                            <br>
 
-                <button class="btn btn-danger" onclick="confirmarExclusao(<?php echo $suspensao_id; ?>)">
-                    Excluir
-                </button>
+                            INEP 23116501
 
-            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="titulo-documento">
+                        AVISO DE SUSPENSÃO
+                    </div>
+
+                    <p class="texto-justificado">
+
+                        Prezado(a) Senhor(a):
+                        <strong><?php echo $responsavel; ?></strong>
+
+                    </p>
+
+                    <p class="texto-justificado">
+
+                        Vimos por meio deste informar que o(a) aluno(a)
+
+                        <strong><?php echo $nome_aluno; ?></strong>,
+
+                        nascido(a) no dia
+
+                        <strong><?php echo $data_nascimento; ?></strong>,
+
+                        matriculado(a) no
+
+                        <strong><?php echo $turma; ?></strong>,
+
+                        do ensino fundamental, foi suspenso(a) pelo prazo de
+
+                        <strong><?php echo $dias; ?> dia(s)</strong>,
+
+                        contados a partir do dia
+
+                        <strong><?php echo $data_inicio; ?></strong>,
+
+                        em razão de:
+
+                        <strong><?php echo strip_tags($motivo); ?></strong>
+
+                    </p>
+
+
+                    <br><br>
+
+                    <p class="texto-justificado">
+
+                        Mombaça, <?php echo date('d/m/Y'); ?>
+
+                    </p>
+
+                    <div class="assinatura">
+
+                        Atenciosamente:
+
+                        <div class="linha-assinatura"></div>
+
+                        Núcleo Gestor
+
+                    </div>
+
+                </div>
+
+                <?php
+
+            }
+
+        } else {
+
+            echo "<div class='alert alert-warning'>Nenhum aluno vinculado.</div>";
+
+        }
+
+        ?>
+
+        <div class="no-print">
+
+            <a href="listar-ocorrencias.php" class="btn btn-secondary">
+                Voltar
+            </a>
+
+            <button class="btn btn-success" onclick="window.print()">
+                Imprimir
+            </button>
+
+            <a href="editar-suspensao.php?id=<?php echo $suspensao_id; ?>" class="btn btn-warning">
+                Editar
+            </a>
+
+            <button class="btn btn-danger" onclick="confirmarExclusao(<?php echo $suspensao_id; ?>)">
+                Excluir
+            </button>
 
         </div>
+
     </div>
 
     <script>
 
         function confirmarExclusao(id) {
 
-            if (confirm("Tem certeza que deseja excluir esta suspensão? Esta ação não pode ser desfeita.")) {
-                window.location.href = "acoes/excluir-suspensao.php?id=" + id;
+            if (confirm("Tem certeza que deseja excluir esta suspensão?")) {
+
+                window.location.href =
+                    "acoes/excluir-suspensao.php?id=" + id;
+
             }
 
         }
 
     </script>
-
-    <style>
-        @media print {
-
-            body * {
-                visibility: hidden;
-            }
-
-            .card,
-            .card * {
-                visibility: visible;
-            }
-
-            .card {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-
-            .no-print {
-                display: none !important;
-            }
-
-            .card,
-            .shadow,
-            .shadow-sm,
-            .shadow-lg {
-                box-shadow: none !important;
-                border-radius: 0 !important;
-            }
-
-        }
-    </style>
-
 </body>
 
 </html>

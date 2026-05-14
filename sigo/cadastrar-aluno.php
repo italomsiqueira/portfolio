@@ -27,6 +27,12 @@ include('layout/menu.php');
                     <label class="form-label">Nome:</label>
                     <input type="text" name="nome" class="form-control" required autofocus>
                 </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Data de nascimento:</label>
+                    <input type="date" name="data_nascimento" class="form-control"
+                        placeholder="dd/mm/yyyy">
+                </div>
 
                 <div class="col-md-6">
                     <label class="form-label">RG:</label>
@@ -43,11 +49,17 @@ include('layout/menu.php');
                     <input type="text" name="tel" id="tel" class="form-control">
                 </div>
 
+                <div class="col-md-6">
+                    <label class="form-label">Responsável:</label>
+                    <input type="text" name="responsavel" id="responsavel" class="form-control">
+                </div>
+
                 <div class="col-md-12">
                     <label class="form-label">Endereço:</label>
                     <input type="text" name="endereco" class="form-control"
                         placeholder="Rua, número, bairro…">
                 </div>
+
 
                 <div class="col-md-6">
                     <label class="form-label">Turma:</label>

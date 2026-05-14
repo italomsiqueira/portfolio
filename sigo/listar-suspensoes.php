@@ -107,7 +107,7 @@ $res = mysqli_query($conn, $sql);
 
         <?php if (isset($_GET['msg'])): ?>
 
-            <div class="alert alert-<?= $_GET['msg'] == 'sucesso' ? 'success' : 'danger' ?>">
+            <div class="alert alert-<?= $_GET['msg'] == 'sucesso' ? 'success': 'danger' ?>">
                 <strong>
                     <?= $_GET['msg'] == 'sucesso' ? 'Deletado com sucesso!' : 'Erro ao deletar!' ?>
                 </strong>

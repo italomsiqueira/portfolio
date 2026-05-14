@@ -10,17 +10,19 @@ echo "</pre>";
 
 require('../includes/conexao.php');
 $nome = strtoupper($_POST['nome']);
+$data_nascimento = $_POST['data_nascimento'];
 $rg = strtoupper($_POST['rg']);
 $cpf = strtoupper($_POST['cpf']);
 $endereco = strtoupper($_POST['endereco']);
 $tel = strtoupper($_POST['tel']);
+$responsavel = strtoupper($_POST['responsavel']);
 $turma = strtoupper($_POST['turma']);
 
 $sql = "
         INSERT INTO alunos
-            (nome, rg, cpf, endereco, tel, turma)
+            (nome, data_nascimento, rg, cpf, endereco, tel, responsavel, turma)
         VALUES
-            ('$nome', '$rg', '$cpf', '$endereco', '$tel', '$turma')
+            ('$nome', '$data_nascimento', '$rg', '$cpf', '$endereco', '$tel', '$responsavel', '$turma')
 ";
 
 if(mysqli_query($conn, $sql)){    

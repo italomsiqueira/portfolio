@@ -2,19 +2,23 @@
 require('../includes/conexao.php');
 $id = $_POST['id'];
 $nome = strtoupper($_POST['nome']);
+$data_nascimento = $_POST['data_nascimento'];
 $rg = strtoupper($_POST['rg']);
 $cpf = strtoupper($_POST['cpf']);
 $endereco = strtoupper($_POST['endereco']);
 $tel = strtoupper($_POST['tel']);
+$responsavel = strtoupper($_POST['responsavel']);
 $turma = strtoupper($_POST['turma']);
 
 $sql = "
     UPDATE alunos SET
     nome = '$nome',
+    data_nascimento = '$data_nascimento',
     rg = '$rg',
     cpf = '$cpf',
     endereco = '$endereco',
     tel = '$tel',
+    responsavel = '$responsavel',
     turma = '$turma'
     WHERE id = $id";
 

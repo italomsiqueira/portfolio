@@ -42,6 +42,12 @@ include('layout/menu.php');
                 </div>
 
                 <div class="col-md-6">
+                    <label class="form-label">Data de nascimento:</label>
+                    <input type="date" name="data_nascimento" class="form-control" value="<?= $al['data_nascimento'] ?>"
+                        placeholder="dd/mm/yyyy">
+                </div>
+
+                <div class="col-md-6">
                     <label class="form-label">RG:</label>
                     <input type="text" name="rg" class="form-control" value="<?= $al['rg'] ?>">
                 </div>
@@ -54,6 +60,11 @@ include('layout/menu.php');
                 <div class="col-md-6">
                     <label class="form-label">Telefone:</label>
                     <input type="text" name="tel" id="tel" class="form-control" value="<?= $al['tel'] ?>">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Responsável:</label>
+                    <input type="text" name="responsavel" id="responsavel" class="form-control" value="<?= $al['responsavel'] ?>    ">
                 </div>
 
                 <div class="col-md-12">
