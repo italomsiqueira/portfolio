@@ -170,7 +170,7 @@ ORDER BY t.ano, t.turma, a.nome
 
                 $data_nascimento = !empty($aluno['data_nascimento'])
                     ? date('d/m/Y', strtotime($aluno['data_nascimento']))
-                    : "";
+                    : "____/____/____";
 
                 $turma = "{$aluno['ano']}º ano - Turma {$aluno['turma']}";
 
